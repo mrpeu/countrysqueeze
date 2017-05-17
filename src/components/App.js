@@ -1,6 +1,6 @@
 import React from 'react'
 import Header from './Header'
-import CountryTable from '../containers/CountryTable'
+import Game from '../containers/Game'
 import MainToolbar from '../containers/MainToolbar'
 import './App.css'
 
@@ -8,6 +8,6 @@ export default () => (
   <div className='App'>
     <Header />
     <MainToolbar />
-    <CountryTable />
+    <Game />
   </div>
 )

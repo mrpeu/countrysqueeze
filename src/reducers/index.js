@@ -1,8 +1,8 @@
 import {combineReducers} from 'redux'
-import countries from './countries'
 import tools from './tools'
+import game from './game'
 
 export default combineReducers({
   tools,
-  countries
+  game
 })
