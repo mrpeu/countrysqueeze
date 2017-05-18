@@ -16,7 +16,7 @@ const DEFAULT_ROUND = {
   start: Date.now(),
   end: null,
   countries: [],
-  pageIndex: -1,
+  pageIndex: 0,
   pageLength: 5,
   answer: 0,
   correct: 0,
@@ -46,8 +46,22 @@ const updatePageWithAnswer = (state, answer) => {
         fail: r.fail + (answer.cca2 !== correctAnswer)
       }
     }
+  })
+}
+
+const goNextPage = (round) => {
+  const newPageIndex = (round.pageIndex < 0)
+    ? 0 // first page
+    : round.pageIndex + round.pageLength
+
+  const rand = ~~(Math.random() * round.pageLength)
+  const newAnswer = round.countries[newPageIndex + Math.min(rand, round.countries.length)]
+
+  return {
+    ...round,
+    answer: newAnswer,
+    pageIndex: newPageIndex
   }
-)
 }
 
 const endRound = (rounds, id) => rounds.map(r =>
@@ -55,7 +69,7 @@ const endRound = (rounds, id) => rounds.map(r =>
     ? {
       ...r,
       end: Date.now(),
-      pageIndex: -1
+      pageIndex: 0
     }
     : r
 )
@@ -92,30 +106,17 @@ export default (state = DEFAULT_STATE, action) => {
       if (!round) throw new Error('[game reducer] trying to increment set but there\'s no current round')
       return {
         ...state,
-        rounds: state.rounds.map((r) => {
-          if (r.id !== round.id) { return r } else {
-            const newPageIndex = (round.pageIndex < 0)
-              ? 0 // first page
-              : round.pageIndex + round.pageLength
-
-            const rand = ~~(Math.random() * round.pageLength)
-            const newAnswer = state.countries[newPageIndex + Math.min(rand, state.countries.length)]
-            if (!newAnswer) debugger
-
-            return {
-              ...r,
-              answer: newAnswer,
-              pageIndex: newPageIndex
-            }
-          }
-        })
+        rounds: state.rounds.map((r) => (
+          r.id !== round.id
+          ? r
+          : goNextPage({...round, countries: state.countries})
+        ))
       }
 
     case 'END_ROUND':
       return {
         ...state,
         rounds: endRound(state.rounds, state.currentRoundId),
-        currentRoundId: -1,
         status: GAME_STATUS.END
       }
 

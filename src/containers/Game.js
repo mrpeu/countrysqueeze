@@ -44,8 +44,13 @@ const getGameRound = ({status, currentRoundId, rounds, countries, dispatch}) => 
   </div>
 }
 
-const getGameEnd = () => {
-  return <div>END.</div>
+const getGameEnd = ({status, currentRoundId, rounds}) => {
+  const currentRound = rounds.find(r => r.id === currentRoundId)
+
+  return <div>
+    <div>score:&nbsp;{currentRound.correct}&nbsp;:&nbsp;{currentRound.fail}</div>
+    END.
+  </div>
 }
 
 const getGameContent = (state) => {

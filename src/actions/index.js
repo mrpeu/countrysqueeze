@@ -1,21 +1,24 @@
 
-export const showNextPage = () => ({
-  type: 'SHOW_NEXT_PAGE'
-})
-
-export const startNewRound = () => (dispatch) => {
-  dispatch({type: 'START_NEW_ROUND'})
-  dispatch(showNextPage())
+export const showNextPageOrEndRound = (dispatch, getState) => {
+  const game = getState().game
+  const round = game.rounds[game.currentRoundId]
+  const nbCountriesLeft = game.countries.length - (round.pageIndex + round.pageLength)
+  console.log(nbCountriesLeft)
+  return dispatch(nbCountriesLeft > round.pageLength
+    ? {type: 'SHOW_NEXT_PAGE'}
+    : {type: 'END_ROUND'}
+  )
 }
 
-export const selectAnswer = (countryAnswer) => (dispatch) => {
+export const startNewRound = () => (dispatch, getState) => {
+  dispatch({type: 'START_NEW_ROUND'})
+  dispatch(showNextPageOrEndRound(dispatch, getState))
+}
+
+export const selectAnswer = (countryAnswer) => (dispatch, getState) => {
   dispatch({
     type: 'SELECT_ANSWER',
     answer: countryAnswer
   })
-  dispatch(showNextPage())
+  return showNextPageOrEndRound(dispatch, getState)
 }
-
-export const endRound = () => ({
-  type: 'END_ROUND'
-})
