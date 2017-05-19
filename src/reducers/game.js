@@ -1,4 +1,5 @@
 import countriesList from '../../node_modules/world-countries/dist/countries.json'
+import {isMatch} from 'lodash/fp'
 
 export const GAME_STATUS = {
   MENU: 0, RUNNING: 1, END: 2
@@ -8,6 +9,10 @@ const DEFAULT_STATE = {
   status: GAME_STATUS.MENU,
   countries: countriesList,
   currentRoundId: -1,
+  filters: {
+    region: ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
+  },
+  selectedFilters: {},
   rounds: []
 }
 
@@ -15,7 +20,8 @@ const DEFAULT_ROUND = {
   id: -1,
   start: Date.now(),
   end: null,
-  countries: [],
+  // filter: {region:'Europe'},
+  // countries: [],
   pageIndex: 0,
   pageLength: 5,
   answer: 0,
@@ -26,7 +32,8 @@ const DEFAULT_ROUND = {
 const startNewRound = (countries, options) => {
   return {
     ...DEFAULT_ROUND,
-    ...options
+    ...options,
+    countries: countries.filter(isMatch(options.filter))
   }
 }
 
@@ -75,8 +82,18 @@ const endRound = (rounds, id) => rounds.map(r =>
 )
 
 export default (state = DEFAULT_STATE, action) => {
-  console.log(action.type)
+  // console.log(action.type)
+
   switch (action.type) {
+
+    case 'SELECT_FILTER':
+      return {
+        ...state,
+        filter: {
+          ...state.selectedFilters,
+          ...action.value
+        }
+      }
 
     case 'START_NEW_ROUND':
       return {
@@ -87,6 +104,7 @@ export default (state = DEFAULT_STATE, action) => {
             state.countries,
             {
               id: state.rounds.length,
+              filter: state.filter,
               pageLength: 4
             }
           )
@@ -109,7 +127,7 @@ export default (state = DEFAULT_STATE, action) => {
         rounds: state.rounds.map((r) => (
           r.id !== round.id
           ? r
-          : goNextPage({...round, countries: state.countries})
+          : goNextPage(round)
         ))
       }
 

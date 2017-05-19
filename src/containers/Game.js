@@ -2,14 +2,22 @@ import React from 'react'
 import {connect} from 'react-redux'
 import CountryTable from '../components/CountryTable'
 import {GAME_STATUS} from '../reducers/game'
-import {startNewRound, selectAnswer} from '../actions'
+import {selectFilter, startNewRound, selectAnswer} from '../actions'
 
-const getGameMenu = ({dispatch}) => {
+const getGameMenu = ({filters, selectedFilters, dispatch}, onSelectFilter) => {
   return <div>
     <h4>Menu</h4>
     <div>
+      <span>region:</span>
+      <select value={selectedFilters.region} onChange={e => {
+        dispatch(onSelectFilter({region: e.target.value}))
+      }}>
+        <option value=''>All</option>
+        {filters.region.map(filter => (
+          <option value={filter} key={filter}>{filter}</option>
+        ))}
+      </select>
       <button onClick={e => {
-        e.preventDefault()
         dispatch(startNewRound())
       }}>
         startNewRound
@@ -18,20 +26,20 @@ const getGameMenu = ({dispatch}) => {
   </div>
 }
 
-const getGameRound = ({status, currentRoundId, rounds, countries, dispatch}) => {
+const getGameRound = ({status, currentRoundId, rounds, dispatch}) => {
   const currentRound = rounds.find(r => r.id === currentRoundId)
   return <div>
     <span>
       <div>progress:&nbsp;
         {currentRound.pageIndex} - {currentRound.pageIndex + currentRound.pageLength}
         &nbsp;/&nbsp;
-        {countries.length}
+        {currentRound.countries.length}
       </div>
       <div>score:&nbsp;{currentRound.correct}&nbsp;:&nbsp;{currentRound.fail}</div>
 
     </span>
     <CountryTable
-      countries={countries.slice(
+      countries={currentRound.countries.slice(
         currentRound.pageIndex,
         currentRound.pageIndex + currentRound.pageLength
       )}
@@ -56,7 +64,7 @@ const getGameEnd = ({status, currentRoundId, rounds}) => {
 const getGameContent = (state) => {
   switch (state.status) {
     case GAME_STATUS.MENU:
-      return getGameMenu(state)
+      return getGameMenu(state, selectFilter)
 
     case GAME_STATUS.RUNNING:
       return getGameRound(state)

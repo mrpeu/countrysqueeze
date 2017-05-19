@@ -2,8 +2,8 @@
 export const showNextPageOrEndRound = (dispatch, getState) => {
   const game = getState().game
   const round = game.rounds[game.currentRoundId]
-  const nbCountriesLeft = game.countries.length - (round.pageIndex + round.pageLength)
-  console.log(nbCountriesLeft)
+  const nbCountriesLeft = round.countries.length - (round.pageIndex + round.pageLength)
+
   return dispatch(nbCountriesLeft > round.pageLength
     ? {type: 'SHOW_NEXT_PAGE'}
     : {type: 'END_ROUND'}
@@ -22,3 +22,8 @@ export const selectAnswer = (countryAnswer) => (dispatch, getState) => {
   })
   return showNextPageOrEndRound(dispatch, getState)
 }
+
+export const selectFilter = (value) => ({
+  type: 'SELECT_FILTER',
+  value
+})
