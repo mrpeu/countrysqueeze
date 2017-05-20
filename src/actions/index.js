@@ -1,3 +1,4 @@
+import loadCountries from '../loadCountries'
 
 export const showNextPageOrEndRound = (dispatch, getState) => {
   const game = getState().game
@@ -12,7 +13,6 @@ export const showNextPageOrEndRound = (dispatch, getState) => {
 
 export const startNewRound = () => (dispatch, getState) => {
   dispatch({type: 'START_NEW_ROUND'})
-  dispatch(showNextPageOrEndRound(dispatch, getState))
 }
 
 export const selectAnswer = (countryAnswer) => (dispatch, getState) => {
@@ -27,3 +27,18 @@ export const selectFilter = (value) => ({
   type: 'SELECT_FILTER',
   value
 })
+
+export const gameInitialized = (countries) => ({
+  type: 'GAME_INITIALIZED',
+  game: {countries}
+})
+
+export const initializingGame = (countries) => (dispatch, getState) => {
+  loadCountries(v => {
+    dispatch(gameInitialized(v))
+  })
+  return {
+    type: 'INITIALIZING_GAME',
+    countries
+  }
+}

@@ -1,40 +1,12 @@
-import countriesList from 'world-countries'
 import {isMatch} from 'lodash/fp'
 
-// -- todo: move
-const countriesData = {}
-const t = Date.now()
-console.log('Flags loading')
-Promise.all(
-  countriesList.map(c => {
-    return new Promise((resolve, reject) => {
-      window.fetch(`${process.env.PUBLIC_URL}/data/${c.cca3}.svg`)
-        .then(response => {
-          if (!response.ok) throw new Error('[game] Response not ok')
-          return response.text()
-        })
-        .then(svg => {
-          resolve({cca3: c.cca3, flag: svg})
-        })
-        .catch(err => { throw new Error(err) })
-    })
-  })
-)
-.then(values => {
-  values.forEach(v => {
-    countriesData.v = {flag: v.flag}
-  })
-  console.log('Flags loaded in', (~~((Date.now() - t) * 1000) / 1000) + 's')
-})
-// ----
-
 export const GAME_STATUS = {
-  MENU: 0, RUNNING: 1, END: 2
+  INIT: -1, MENU: 0, RUNNING: 1, END: 2
 }
 
 const DEFAULT_STATE = {
-  status: GAME_STATUS.MENU,
-  countries: countriesList,
+  status: GAME_STATUS.INIT,
+  countries: [],
   currentRoundId: -1,
   filters: {
     region: ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
@@ -109,9 +81,22 @@ const endRound = (rounds, id) => rounds.map(r =>
 )
 
 export default (state = DEFAULT_STATE, action) => {
-  // console.log(action.type)
+  console.log(action.type)
 
   switch (action.type) {
+
+    case 'INITIALIZING_GAME':
+      return {
+        ...state,
+        status: GAME_STATUS.INIT
+      }
+
+    case 'GAME_INITIALIZED':
+      return {
+        ...state,
+        ...action.game,
+        status: GAME_STATUS.MENU
+      }
 
     case 'SELECT_FILTER':
       return {

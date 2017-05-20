@@ -6,11 +6,14 @@ import thunk from 'redux-thunk'
 import Reducer from './reducers'
 import App from './components/App'
 import './index.css'
+import {initializingGame} from './actions'
 
 const store = createStore(
   Reducer,
   applyMiddleware(thunk)
 )
+
+store.dispatch(initializingGame())
 
 render(
   <Provider store={store}>

@@ -1,13 +1,21 @@
 import React from 'react'
 
-export default ({countries, countryAnswer, onClickCountry}) => {
+export default ({countries, flags, onClickCountry}) => {
   return (
     <div className='CountryTable'>
-      <h3>CountryTable</h3>
-      <div>{countryAnswer.cca2}</div>
       {countries.map(c =>
-        <div key={c.cca2} onClick={e => onClickCountry(c)}>
-          {c.name.common}&nbsp;({c.cca2}=={countryAnswer.cca2})
+        <div key={c.cca2} className='Country' onClick={e => onClickCountry(c)}>
+          <div className='Card'>
+            <div className='Flag'>
+              <img
+                src={process.env.PUBLIC_URL + 'data/' + c.cca3 + '.svg'}
+                alt={`flag of ${c.name.common}`}
+              />
+            </div>
+            <div className='Name'>
+              {c.name.common}
+            </div>
+          </div>
         </div>
       )}
     </div>
