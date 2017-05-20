@@ -1,5 +1,32 @@
-import countriesList from '../../node_modules/world-countries/dist/countries.json'
+import countriesList from 'world-countries'
 import {isMatch} from 'lodash/fp'
+
+// -- todo: move
+const countriesData = {}
+const t = Date.now()
+console.log('Flags loading')
+Promise.all(
+  countriesList.map(c => {
+    return new Promise((resolve, reject) => {
+      window.fetch(`${process.env.PUBLIC_URL}/data/${c.cca3}.svg`)
+        .then(response => {
+          if (!response.ok) throw new Error('[game] Response not ok')
+          return response.text()
+        })
+        .then(svg => {
+          resolve({cca3: c.cca3, flag: svg})
+        })
+        .catch(err => { throw new Error(err) })
+    })
+  })
+)
+.then(values => {
+  values.forEach(v => {
+    countriesData.v = {flag: v.flag}
+  })
+  console.log('Flags loaded in', (~~((Date.now() - t) * 1000) / 1000) + 's')
+})
+// ----
 
 export const GAME_STATUS = {
   MENU: 0, RUNNING: 1, END: 2
