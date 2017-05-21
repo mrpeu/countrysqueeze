@@ -7,6 +7,12 @@ import Reducer from './reducers'
 import App from './components/App'
 import './index.css'
 import {initializingGame} from './actions'
+import injectTapEventPlugin from 'react-tap-event-plugin'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+
+// Needed for onTouchTap
+// http://stackoverflow.com/a/34015469/988941
+injectTapEventPlugin()
 
 const store = createStore(
   Reducer,
@@ -17,7 +23,9 @@ store.dispatch(initializingGame())
 
 render(
   <Provider store={store}>
-    <App />
+    <MuiThemeProvider>
+      <App />
+    </MuiThemeProvider>
   </Provider>,
   document.getElementById('root')
 )

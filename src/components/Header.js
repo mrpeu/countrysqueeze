@@ -1,7 +1,8 @@
 import React from 'react'
+import AppBar from 'material-ui/AppBar'
 
 export default () => (
-  <div className='Header'>
-    <h1>Header</h1>
-  </div>
+  <AppBar
+    title='CountrySqueeze!'
+  />
 )

@@ -4,9 +4,11 @@
   "private": true,
   "homepage": "http://mrpeu.github.io/countrysqueeze",
   "dependencies": {
+    "material-ui": "^0.18.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.4",
+    "react-tap-event-plugin": "^2.0.1",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
     "world-countries": "https://github.com/mledoze/countries.git"

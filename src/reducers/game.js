@@ -23,17 +23,23 @@ const DEFAULT_ROUND = {
   // countries: [],
   pageIndex: 0,
   pageLength: 5,
-  answer: 0,
+  // answer: 0,
   correct: 0,
   fail: 0
 }
 
+const getNewAnswer = (round) => {
+  const rand = ~~(Math.random() * round.pageLength)
+  const answer = round.pageIndex + Math.min(rand, round.countries.length)
+  return {...round, answer}
+}
+
 const startNewRound = (countries, options) => {
-  return {
+  return getNewAnswer({
     ...DEFAULT_ROUND,
     ...options,
     countries: countries.filter(isMatch(options.filter))
-  }
+  })
 }
 
 const getCurrentRound = (state) => (
@@ -45,7 +51,7 @@ const getCurrentRound = (state) => (
 const updatePageWithAnswer = (state, answer) => {
   return state.rounds.map(r => {
     if (r.id !== state.currentRoundId) { return r } else {
-      const correctAnswer = r.answer.cca2
+      const correctAnswer = getCurrentRound(state).countries[r.answer].cca2
       return {
         ...r,
         correct: r.correct + (answer.cca2 === correctAnswer),
@@ -60,14 +66,10 @@ const goNextPage = (round) => {
     ? 0 // first page
     : round.pageIndex + round.pageLength
 
-  const rand = ~~(Math.random() * round.pageLength)
-  const newAnswer = round.countries[newPageIndex + Math.min(rand, round.countries.length)]
-
-  return {
+  return getNewAnswer({
     ...round,
-    answer: newAnswer,
     pageIndex: newPageIndex
-  }
+  })
 }
 
 const endRound = (rounds, id) => rounds.map(r =>
@@ -81,7 +83,7 @@ const endRound = (rounds, id) => rounds.map(r =>
 )
 
 export default (state = DEFAULT_STATE, action) => {
-  console.log(action.type)
+  // console.log(action.type)
 
   switch (action.type) {
 

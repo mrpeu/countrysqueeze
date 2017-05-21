@@ -4,25 +4,44 @@ import CountryTable from '../components/CountryTable'
 import {GAME_STATUS} from '../reducers/game'
 import {selectFilter, startNewRound, selectAnswer} from '../actions'
 
+import Paper from 'material-ui/Paper'
+import FlatButton from 'material-ui/FlatButton'
+import SelectField from 'material-ui/SelectField'
+import MenuItem from 'material-ui/MenuItem'
+
 const getGameMenu = ({filters, selectedFilters, dispatch, status}, onSelectFilter) => {
-  return <div>
-    <h4>Menu</h4>
-    <div>
-      <span>region:</span>
-      <select value={selectedFilters.region} onChange={e => {
-        dispatch(onSelectFilter({region: e.target.value}))
-      }}>
-        <option value=''>All</option>
-        {filters.region.map(filter => (
-          <option value={filter} key={filter}>{filter}</option>
-        ))}
-      </select>
-      <button onClick={e => {
-        dispatch(startNewRound())
-      }} disabled={status === GAME_STATUS.INIT}>
-        startNewRound
-      </button>
-    </div>
+  return <div className='MenuWrapper'>
+    <Paper zDepth={2} className='Menu'>
+      <div className='MenuHeader'>
+        MENU
+      </div>
+      <div>
+        <SelectField
+          value={selectedFilters.region || ''}
+          onChange={(ev, key, payload) => {
+            dispatch(onSelectFilter({region: payload}))
+          }}
+          floatingLabelText='Region'
+          floatingLabelFixed
+          style={{width: '14em'}}
+        >
+          <MenuItem value='' primaryText='All' />
+          {filters.region.map(filter => (
+            <MenuItem value={filter} key={filter} primaryText={filter} />
+          ))}
+        </SelectField>
+      </div>
+      <div>
+        <FlatButton
+          onClick={e => {
+            dispatch(startNewRound())
+          }}
+          disabled={status === GAME_STATUS.INIT}
+          label='start'
+          style={{width: '100%'}}
+      />
+      </div>
+    </Paper>
   </div>
 }
 
@@ -32,6 +51,7 @@ const getGameRound = ({status, currentRoundId, rounds, dispatch}) => {
     currentRound.pageIndex,
     currentRound.pageIndex + currentRound.pageLength
   )
+  const currentAnswer = currentRound.countries[currentRound.answer]
   return <div>
     <span>
       <div>progress:&nbsp;
@@ -42,10 +62,9 @@ const getGameRound = ({status, currentRoundId, rounds, dispatch}) => {
       <div>score:&nbsp;{currentRound.correct}&nbsp;:&nbsp;{currentRound.fail}</div>
     </span>
 
-    <div className='Answer'>{currentRound.countries[currentRound.answer].name.common}</div>
-
     <CountryTable
       countries={countries}
+      countryAnswer={currentAnswer}
       onClickCountry={(countryAnswer) => {
         dispatch(selectAnswer(countryAnswer))
       }} />
@@ -80,7 +99,6 @@ const getGameContent = (state) => {
 
 const Game = (state) => {
   return <div className='Game'>
-    <h2>Game ({Object.keys(GAME_STATUS)[state.status + 1]})</h2>
     {getGameContent(state)}
   </div>
 }
