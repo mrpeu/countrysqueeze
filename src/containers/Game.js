@@ -47,7 +47,7 @@ const getGameRound = ({status, currentRoundId, rounds, dispatch}) => {
   )
   const currentAnswer = currentRound.countries[currentRound.answer]
   return <div>
-    <div style={{}}>&nbsp;
+    <div>&nbsp;
       <div style={{float: 'left'}}>progress:&nbsp;
         {currentRound.pageIndex} - {currentRound.pageIndex + currentRound.pageLength}
         &nbsp;/&nbsp;
