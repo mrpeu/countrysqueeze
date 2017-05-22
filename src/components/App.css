@@ -20,19 +20,21 @@
 }
 
 .MenuFlags {
-  background-color: #e8e8e8;
-  margin: .2em 0;
+  margin-right: 0;
+  margin-left: 0;
   font-size: xx-small;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .MenuFlags > div {
   height: 1em;
   display: inline-block;
   padding: 0 .1em;
-  flex: 0 1 auto;
+  flex: 0 1 2%;
   overflow: hidden;
   text-align: center;
 }

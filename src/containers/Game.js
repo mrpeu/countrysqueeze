@@ -8,17 +8,6 @@ import FlatButton from 'material-ui/FlatButton'
 import SelectField from 'material-ui/SelectField'
 import MenuItem from 'material-ui/MenuItem'
 
-const MenuFlags = ({countries, active}) => <div
-  className='MenuFlags'
-  style={{opacity: active ? 1 : 0.1}}
->
-  {countries.map(c => <div key={c.cca2}>{
-    c.flag
-    ? <img src={c.flag} alt={c.cca3} title={c.name.common} />
-    : c.cca3
-  }</div>)}
-</div>
-
 const getGameMenu = ({filters, selectedFilters, status, countries, dispatch}, onSelectFilter) => {
   return <div className='Menu'>
     <div className='MenuHeader'>
@@ -39,26 +28,13 @@ const getGameMenu = ({filters, selectedFilters, status, countries, dispatch}, on
           <MenuItem value={filter} key={filter} primaryText={filter} />
       ))}
       </SelectField>
-      <MenuFlags
-        countries={countries.filter(c => c.region === 'Africa')}
-        active={!selectedFilters.region || selectedFilters.region === 'Africa'}
-      />
-      <MenuFlags
-        countries={countries.filter(c => c.region === 'Americas')}
-        active={!selectedFilters.region || selectedFilters.region === 'Americas'}
-      />
-      <MenuFlags
-        countries={countries.filter(c => c.region === 'Asia')}
-        active={!selectedFilters.region || selectedFilters.region === 'Asia'}
-      />
-      <MenuFlags
-        countries={countries.filter(c => c.region === 'Europe')}
-        active={!selectedFilters.region || selectedFilters.region === 'Europe'}
-      />
-      <MenuFlags
-        countries={countries.filter(c => c.region === 'Oceania')}
-        active={!selectedFilters.region || selectedFilters.region === 'Oceania'}
-      />
+    </div>
+    <div className='MenuFlags'>
+      {countries.map(c => <div key={c.cca2}>{
+        c.flag
+        ? <img src={c.flag} alt={c.cca3} title={c.name.common} />
+      : c.cca3
+    }</div>)}
     </div>
     <FlatButton
       style={{height: 'auto', padding: '1em'}}
