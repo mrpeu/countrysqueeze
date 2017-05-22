@@ -38,7 +38,7 @@ const startNewRound = (countries, options) => {
   return getNewAnswer({
     ...DEFAULT_ROUND,
     ...options,
-    countries: countries.filter(isMatch(options.filter))
+    countries: countries.filter(isMatch(options.filters))
   })
 }
 
@@ -103,7 +103,7 @@ export default (state = DEFAULT_STATE, action) => {
     case 'SELECT_FILTER':
       return {
         ...state,
-        filter: {
+        selectedFilters: {
           ...state.selectedFilters,
           ...action.value
         }
@@ -118,7 +118,7 @@ export default (state = DEFAULT_STATE, action) => {
             state.countries,
             {
               id: state.rounds.length,
-              filter: state.filter,
+              selectedFilters: state.selectedFilters,
               pageLength: 4
             }
           )

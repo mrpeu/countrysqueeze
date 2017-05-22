@@ -19,6 +19,28 @@
   text-align: center;
 }
 
+.MenuFlags {
+  background-color: #e8e8e8;
+  margin: .2em 0;
+  font-size: xx-small;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+.MenuFlags > div {
+  height: 1em;
+  display: inline-block;
+  padding: 0 .1em;
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-align: center;
+}
+
+.MenuFlags > div > img{
+  height: 100%;
+}
+
 .Answer {
   text-align: center;
 }

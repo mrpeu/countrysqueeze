@@ -34,9 +34,7 @@ export const gameInitialized = (countries) => ({
 })
 
 export const initializingGame = (countries) => (dispatch, getState) => {
-  loadCountries(v => {
-    dispatch(gameInitialized(v))
-  })
+  dispatch(loadCountries(v => gameInitialized(v)))
   return {
     type: 'INITIALIZING_GAME',
     countries
