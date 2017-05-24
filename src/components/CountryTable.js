@@ -17,7 +17,7 @@ export default ({countries, countryAnswer, flags, onClickCountry}) =>
         >
           <img
             className='Flag'
-            src={process.env.PUBLIC_URL + 'data/' + c.cca3 + '.svg'}
+            src={c.flag}
             alt={`flag of ${c.name.common}`}
           />
         </GridTile>

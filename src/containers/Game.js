@@ -5,8 +5,7 @@ import {GAME_STATUS} from '../reducers/game'
 import {selectFilter, startNewRound, selectAnswer} from '../actions'
 
 import FlatButton from 'material-ui/FlatButton'
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
+import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton'
 
 const getGameMenu = ({filters, selectedFilters, status, countries, dispatch}, onSelectFilter) => {
   return <div className='Menu'>
@@ -14,20 +13,21 @@ const getGameMenu = ({filters, selectedFilters, status, countries, dispatch}, on
       MENU
     </div>
     <div>
-      <SelectField
+      <RadioButtonGroup
+        name='selectedFilters.region'
         value={selectedFilters.region || ''}
-        onChange={(ev, key, payload) => {
-          dispatch(onSelectFilter({region: payload}))
+        onChange={(ev, value) => {
+          dispatch(onSelectFilter({region: value}))
         }}
         floatingLabelText='Region'
         floatingLabelFixed
         style={{width: '80%'}}
     >
-        <MenuItem value='' primaryText='All' />
+        <RadioButton value='' label='All' />
         {filters.region.map(filter => (
-          <MenuItem value={filter} key={filter} primaryText={filter} />
+          <RadioButton value={filter} key={filter} label={filter} />
       ))}
-      </SelectField>
+      </RadioButtonGroup>
     </div>
     <div className='MenuFlags'>
       {countries.map(c => <div key={c.cca2}>{
@@ -48,7 +48,7 @@ const getGameMenu = ({filters, selectedFilters, status, countries, dispatch}, on
   </div>
 }
 
-const getGameRound = ({status, currentRoundId, rounds, dispatch}) => {
+const getGameRunning = ({status, currentRoundId, rounds, dispatch}) => {
   const currentRound = rounds.find(r => r.id === currentRoundId)
   const countries = currentRound.countries.slice(
     currentRound.pageIndex,
@@ -92,7 +92,7 @@ const getGameContent = (state) => {
       return getGameMenu(state, selectFilter)
 
     case GAME_STATUS.RUNNING:
-      return getGameRound(state)
+      return getGameRunning(state)
 
     case GAME_STATUS.END:
       return getGameEnd(state)

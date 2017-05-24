@@ -38,7 +38,7 @@ const startNewRound = (countries, options) => {
   return getNewAnswer({
     ...DEFAULT_ROUND,
     ...options,
-    countries: countries.filter(isMatch(options.filters))
+    countries: countries.filter(isMatch(options.selectedFilters))
   })
 }
 
