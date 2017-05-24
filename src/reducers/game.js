@@ -24,8 +24,8 @@ const DEFAULT_ROUND = {
   pageIndex: 0,
   pageLength: 5,
   // answer: 0,
-  correct: 0,
-  fail: 0
+  corrects: [],
+  fails: []
 }
 
 const getNewAnswer = (round) => {
@@ -52,10 +52,18 @@ const updatePageWithAnswer = (state, answer) => {
   return state.rounds.map(r => {
     if (r.id !== state.currentRoundId) { return r } else {
       const correctAnswer = getCurrentRound(state).countries[r.answer].cca2
+
+      r[ answer.cca2 === correctAnswer
+        ? 'corrects'
+        : 'fails'
+      ].push(answer.cca2)
+
+      console.log(r.corrects, r.fails)
+
       return {
         ...r,
-        correct: r.correct + (answer.cca2 === correctAnswer),
-        fail: r.fail + (answer.cca2 !== correctAnswer)
+        corrects: r.corrects,
+        fails: r.fails
       }
     }
   })
@@ -83,7 +91,7 @@ const endRound = (rounds, id) => rounds.map(r =>
 )
 
 export default (state = DEFAULT_STATE, action) => {
-  // console.log(action.type)
+  console.log(action.type)
 
   switch (action.type) {
 

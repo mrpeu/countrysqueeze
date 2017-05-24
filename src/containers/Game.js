@@ -2,7 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import CountryTable from '../components/CountryTable'
 import {GAME_STATUS} from '../reducers/game'
-import {selectFilter, startNewRound, selectAnswer} from '../actions'
+import {selectFilter, startNewRound, selectAnswer, showMenu} from '../actions'
 
 import FlatButton from 'material-ui/FlatButton'
 import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton'
@@ -55,6 +55,7 @@ const getGameRunning = ({status, currentRoundId, rounds, dispatch}) => {
     currentRound.pageIndex + currentRound.pageLength
   )
   const currentAnswer = currentRound.countries[currentRound.answer]
+
   return <div>
     <div>&nbsp;
       <div style={{float: 'left'}}>progress:&nbsp;
@@ -63,7 +64,7 @@ const getGameRunning = ({status, currentRoundId, rounds, dispatch}) => {
         {currentRound.countries.length}
       </div>
       <div style={{float: 'right'}}>
-        score:&nbsp;{currentRound.correct}&nbsp;:&nbsp;{currentRound.fail}
+        {currentRound.corrects.length}&nbsp;:&nbsp;{currentRound.fails.length}
       </div>
     </div>
 
@@ -76,12 +77,36 @@ const getGameRunning = ({status, currentRoundId, rounds, dispatch}) => {
   </div>
 }
 
-const getGameEnd = ({status, currentRoundId, rounds}) => {
+const getGameEnd = ({countries, currentRoundId, rounds, dispatch}) => {
   const currentRound = rounds.find(r => r.id === currentRoundId)
 
-  return <div>
-    <div>score:&nbsp;{currentRound.correct}&nbsp;:&nbsp;{currentRound.fail}</div>
-    END.
+  return <div className='Menu'>
+    <div className='MenuHeader'>
+      {'score: ' + ~~(currentRound.corrects.length / (currentRound.fails.length + currentRound.corrects.length) * 100) + '%'}
+    </div>
+
+    <div>corrects:
+      {currentRound.corrects.map(f => {
+        const c = countries.find(c => c.cca2 === f)
+        return <div key={f}>{f}:&nbsp;{c.name.common}</div>
+      })}
+    </div>
+
+    <div>fails:
+      {currentRound.fails.map(f => {
+        const c = countries.find(c => c.cca2 === f)
+        return <div key={f}>{f}:&nbsp;{c.name.common}</div>
+      })}
+    </div>
+
+    <FlatButton
+      style={{height: 'auto', padding: '1em'}}
+      fullWidth
+      onClick={e => {
+        dispatch(showMenu())
+      }}
+      label='go to menu'
+    />
   </div>
 }
 

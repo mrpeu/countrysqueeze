@@ -1,5 +1,9 @@
 import loadCountries from '../loadCountries'
 
+export const showMenu = () => ({
+  type: 'GO_MENU'
+})
+
 export const showNextPageOrEndRound = (dispatch, getState) => {
   const game = getState().game
   const round = game.rounds[game.currentRoundId]
