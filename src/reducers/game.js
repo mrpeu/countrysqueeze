@@ -58,8 +58,6 @@ const updatePageWithAnswer = (state, answer) => {
         : 'fails'
       ].push(answer.cca2)
 
-      console.log(r.corrects, r.fails)
-
       return {
         ...r,
         corrects: r.corrects,
@@ -91,7 +89,7 @@ const endRound = (rounds, id) => rounds.map(r =>
 )
 
 export default (state = DEFAULT_STATE, action) => {
-  console.log(action.type)
+  // console.log(action.type)
 
   switch (action.type) {
 
