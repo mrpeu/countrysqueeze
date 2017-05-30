@@ -1,116 +1,12 @@
 import React from 'react'
 import {connect} from 'react-redux'
-import CountryTable from '../components/CountryTable'
 import {GAME_STATUS} from '../reducers/game'
-import {selectFilter, startNewRound, selectAnswer, showMenu} from '../actions'
+import {selectFilter} from '../actions'
+import getGameMenu from '../components/GameMenu'
+import getGameRunning from '../components/GameRunning'
+import getGameEnd from '../components/GameEnd'
 
-import FlatButton from 'material-ui/FlatButton'
-import {RadioButtonGroup, RadioButton} from 'material-ui/RadioButton'
-
-const getGameMenu = ({filters, selectedFilters, status, countries, dispatch}, onSelectFilter) => {
-  return <div className='Menu'>
-    <div className='MenuHeader'>
-      MENU
-    </div>
-    <div>
-      <RadioButtonGroup
-        name='selectedFilters.region'
-        value={selectedFilters.region || ''}
-        onChange={(ev, value) => {
-          dispatch(onSelectFilter({region: value}))
-        }}
-        floatingLabelText='Region'
-        floatingLabelFixed
-        style={{width: '80%'}}
-    >
-        <RadioButton value='' label='All' />
-        {filters.region.map(filter => (
-          <RadioButton value={filter} key={filter} label={filter} />
-      ))}
-      </RadioButtonGroup>
-    </div>
-    <div className='MenuFlags'>
-      {countries.map(c => <div key={c.cca2}>{
-        c.flag
-        ? <img src={c.flag} alt={c.cca3} title={c.name.common} />
-      : c.cca3
-    }</div>)}
-    </div>
-    <FlatButton
-      style={{height: 'auto', padding: '1em'}}
-      fullWidth
-      onClick={e => {
-        dispatch(startNewRound())
-      }}
-      disabled={status === GAME_STATUS.INIT}
-      label='start'
-    />
-  </div>
-}
-
-const getGameRunning = ({status, currentRoundId, rounds, dispatch}) => {
-  const currentRound = rounds.find(r => r.id === currentRoundId)
-  const countries = currentRound.countries.slice(
-    currentRound.pageIndex,
-    currentRound.pageIndex + currentRound.pageLength
-  )
-  const currentAnswer = currentRound.countries[currentRound.answer]
-
-  return <div>
-    <div>&nbsp;
-      <div style={{float: 'left'}}>progress:&nbsp;
-        {currentRound.pageIndex} - {currentRound.pageIndex + currentRound.pageLength}
-        &nbsp;/&nbsp;
-        {currentRound.countries.length}
-      </div>
-      <div style={{float: 'right'}}>
-        {currentRound.corrects.length}&nbsp;:&nbsp;{currentRound.fails.length}
-      </div>
-    </div>
-
-    <CountryTable
-      countries={countries}
-      countryAnswer={currentAnswer}
-      onClickCountry={(countryAnswer) => {
-        dispatch(selectAnswer(countryAnswer))
-      }} />
-  </div>
-}
-
-const getGameEnd = ({countries, currentRoundId, rounds, dispatch}) => {
-  const currentRound = rounds.find(r => r.id === currentRoundId)
-
-  return <div className='Menu'>
-    <div className='MenuHeader'>
-      {'score: ' + ~~(currentRound.corrects.length / (currentRound.fails.length + currentRound.corrects.length) * 100) + '%'}
-    </div>
-
-    <div>corrects:
-      {currentRound.corrects.map(f => {
-        const c = countries.find(c => c.cca2 === f)
-        return <div key={f}>{f}:&nbsp;{c.name.common}</div>
-      })}
-    </div>
-
-    <div>fails:
-      {currentRound.fails.map(f => {
-        const c = countries.find(c => c.cca2 === f)
-        return <div key={f}>{f}:&nbsp;{c.name.common}</div>
-      })}
-    </div>
-
-    <FlatButton
-      style={{height: 'auto', padding: '1em'}}
-      fullWidth
-      onClick={e => {
-        dispatch(showMenu())
-      }}
-      label='go to menu'
-    />
-  </div>
-}
-
-const getGameContent = (state) => {
+const getGame = (state) => {
   switch (state.status) {
     case GAME_STATUS.INIT:
     case GAME_STATUS.MENU:
@@ -129,7 +25,7 @@ const getGameContent = (state) => {
 
 const Game = (state) => {
   return <div className='Game'>
-    {getGameContent(state)}
+    {getGame(state)}
   </div>
 }
 
