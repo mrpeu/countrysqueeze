@@ -12,16 +12,16 @@ export default ({countries, roundIndex, rounds, dispatch}) => {
     </div>
 
     <div>corrects:
-      {currentRound.corrects.map(f => {
-        const c = countries.find(c => c.cca2 === f)
-        return <div key={f}>{f}:&nbsp;{c.name.common}</div>
+      {currentRound.corrects.map(cca2 => {
+        const c = countries[cca2]
+        return <div key={cca2}>{cca2}:&nbsp;{c.name.common}</div>
       })}
     </div>
 
     <div>fails:
-      {currentRound.fails.map(f => {
-        const c = countries.find(c => c.cca2 === f)
-        return <div key={f}>{f}:&nbsp;{c.name.common}</div>
+      {currentRound.fails.map(cca2 => {
+        const c = countries[cca2]
+        return <div key={cca2}>{cca2}:&nbsp;{c.name.common}</div>
       })}
     </div>
 

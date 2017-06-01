@@ -81,17 +81,18 @@ const startNewRound = (countries, options) => {
 const updateRoundWithEntry = (state, entry) => {
   return state.rounds.map((r, key) => {
     if (key !== state.roundIndex) { return r } else {
-      const round = state.rounds[state.roundIndex]
-      const page = round.pages[round.pageIndex]
-      const answer = state.countries[page.answer]
+      const answer = r.pages[r.pageIndex].answer
 
-      r[ entry.cca2 === answer.cca2 ? 'corrects' : 'fails' ]
-        .push(answer)
-
-      return {
-        ...r,
-        corrects: r.corrects,
-        fails: r.fails
+      if (entry.cca2 === answer) {
+        return {
+          ...r,
+          corrects: [...r.corrects, answer]
+        }
+      } else {
+        return {
+          ...r,
+          fails: [...r.fails, answer]
+        }
       }
     }
   })
@@ -108,7 +109,7 @@ const endRound = (rounds, roundIndex) => rounds.map((r, key) =>
 )
 
 export default (state = DEFAULT_STATE, action) => {
-  console.log(action.type)
+  // console.log(action.type)
 
   switch (action.type) {
 
