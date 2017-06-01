@@ -3,8 +3,8 @@ import {showMenu} from '../actions'
 
 import FlatButton from 'material-ui/FlatButton'
 
-export default ({countries, currentRoundId, rounds, dispatch}) => {
-  const currentRound = rounds.find(r => r.id === currentRoundId)
+export default ({countries, roundIndex, rounds, dispatch}) => {
+  const currentRound = rounds[roundIndex]
 
   return <div className='Menu'>
     <div className='MenuHeader'>

@@ -6,10 +6,9 @@ export const showMenu = () => ({
 
 export const showNextPageOrEndRound = (dispatch, getState) => {
   const game = getState().game
-  const round = game.rounds[game.currentRoundId]
-  const nbCountriesLeft = round.countries.length - (round.pageIndex + round.pageLength)
+  const round = game.rounds[game.roundIndex]
 
-  return dispatch(nbCountriesLeft > round.pageLength
+  return dispatch(round.pages.length - 1 >= round.pageIndex + 1
     ? {type: 'SHOW_NEXT_PAGE'}
     : {type: 'END_ROUND'}
   )
@@ -19,10 +18,10 @@ export const startNewRound = () => (dispatch, getState) => {
   dispatch({type: 'START_NEW_ROUND'})
 }
 
-export const selectAnswer = (countryAnswer) => (dispatch, getState) => {
+export const selectEntry = (countryEntry) => (dispatch, getState) => {
   dispatch({
-    type: 'SELECT_ANSWER',
-    answer: countryAnswer
+    type: 'SELECT_ENTRY',
+    entry: countryEntry
   })
   return showNextPageOrEndRound(dispatch, getState)
 }
@@ -32,15 +31,17 @@ export const selectFilter = (value) => ({
   value
 })
 
-export const gameInitialized = (countries) => ({
-  type: 'GAME_INITIALIZED',
-  game: {countries}
-})
-
-export const initializingGame = (countries) => (dispatch, getState) => {
-  dispatch(loadCountries(v => gameInitialized(v)))
+export const gameInitialized = (countries) => {
   return {
+    type: 'GAME_INITIALIZED',
+    game: {countries}
+  }
+}
+
+export const initializingGame = (countries = {}) => (dispatch, getState) => {
+  dispatch({
     type: 'INITIALIZING_GAME',
     countries
-  }
+  })
+  dispatch(loadCountries(gameInitialized))
 }

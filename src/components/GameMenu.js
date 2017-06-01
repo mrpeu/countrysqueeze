@@ -19,7 +19,6 @@ export default ({filters, selectedFilters, status, countries, dispatch}, onSelec
         }}
         floatingLabelText='Region'
         floatingLabelFixed
-        style={{width: '80%'}}
     >
         <RadioButton value='' label='All' />
         {filters.region.map(filter => (
@@ -34,7 +33,7 @@ export default ({filters, selectedFilters, status, countries, dispatch}, onSelec
         dispatch(startNewRound())
       }}
       disabled={status === GAME_STATUS.INIT}
-      label='start'
+      label={(status === GAME_STATUS.INIT ? 'initializing...' : 'start')}
     />
   </div>
 }

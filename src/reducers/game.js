@@ -1,4 +1,4 @@
-import {isMatch} from 'lodash/fp'
+import isMatch from 'lodash.ismatch'
 
 export const GAME_STATUS = {
   INIT: -1, MENU: 0, RUNNING: 1, END: 2
@@ -7,7 +7,7 @@ export const GAME_STATUS = {
 const DEFAULT_STATE = {
   status: GAME_STATUS.INIT,
   countries: [],
-  currentRoundId: -1,
+  roundIndex: -1,
   filters: {
     region: ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania']
   },
@@ -16,47 +16,77 @@ const DEFAULT_STATE = {
 }
 
 const DEFAULT_ROUND = {
-  id: -1,
   start: Date.now(),
   end: null,
   // filter: {region:'Europe'},
   // countries: [],
   pageIndex: 0,
   pageLength: 5,
-  // answer: 0,
+  pages: [
+    /* {
+      answer: [String: cca2],
+      countries: [
+        [String: cca2]
+      ]
+    } */
+  ],
   corrects: [],
   fails: []
 }
 
-const getNewAnswer = (round) => {
-  const rand = ~~(Math.random() * round.pageLength)
-  const answer = round.pageIndex + Math.min(rand, round.countries.length)
-  return {...round, answer}
+// return a list of [nb] unique countries out of [countries],
+// including a specified one [answer]
+const getXCountriesForAnswer = (nb, countries, answer) => {
+  const arr = [answer]
+  let cca2 = -1
+  for (let i = 0; i < nb - 1; i++) {
+    cca2 = -1
+    while (cca2 < 0 || arr.includes(cca2)) {
+      cca2 = ~~(Math.random() * countries.length)
+    }
+    if (cca2 > nb / 2) arr.push(cca2)
+    else arr.unshift(cca2)
+
+    cca2 = -1
+  }
+  return arr.map(cca2 => countries[cca2])
+}
+
+const createRoundsPages = (round, countries) => {
+  const pages = [...Array(countries.length)].map((_, i) => {
+    const result = {
+      countries: getXCountriesForAnswer(round.pageLength, countries, i),
+      answer: countries[i]
+    }
+    return result
+  })
+  return {
+    ...round,
+    pages
+  }
 }
 
 const startNewRound = (countries, options) => {
-  return getNewAnswer({
+  const selectedCountries = Object.keys(countries)
+    .filter(key => {
+      return isMatch(countries[key], options.selectedFilters)
+    })
+  return createRoundsPages({
     ...DEFAULT_ROUND,
     ...options,
-    countries: countries.filter(isMatch(options.selectedFilters))
-  })
+    countries: selectedCountries
+  }, selectedCountries)
 }
 
-const getCurrentRound = (state) => (
-  state.status === GAME_STATUS.RUNNING
-    ? state.rounds.find(r => r.id === state.currentRoundId)
-    : null
-)
+const updateRoundWithEntry = (state, entry) => {
+  return state.rounds.map((r, key) => {
+    if (key !== state.roundIndex) { return r } else {
+      const round = state.rounds[state.roundIndex]
+      const page = round.pages[round.pageIndex]
+      const answer = state.countries[page.answer]
 
-const updatePageWithAnswer = (state, answer) => {
-  return state.rounds.map(r => {
-    if (r.id !== state.currentRoundId) { return r } else {
-      const correctAnswer = getCurrentRound(state).countries[r.answer].cca2
-
-      r[ answer.cca2 === correctAnswer
-        ? 'corrects'
-        : 'fails'
-      ].push(answer.cca2)
+      r[ entry.cca2 === answer.cca2 ? 'corrects' : 'fails' ]
+        .push(answer)
 
       return {
         ...r,
@@ -67,19 +97,8 @@ const updatePageWithAnswer = (state, answer) => {
   })
 }
 
-const goNextPage = (round) => {
-  const newPageIndex = (round.pageIndex < 0)
-    ? 0 // first page
-    : round.pageIndex + round.pageLength
-
-  return getNewAnswer({
-    ...round,
-    pageIndex: newPageIndex
-  })
-}
-
-const endRound = (rounds, id) => rounds.map(r =>
-  r.id === id
+const endRound = (rounds, roundIndex) => rounds.map((r, key) =>
+  key === roundIndex
     ? {
       ...r,
       end: Date.now(),
@@ -89,7 +108,7 @@ const endRound = (rounds, id) => rounds.map(r =>
 )
 
 export default (state = DEFAULT_STATE, action) => {
-  // console.log(action.type)
+  console.log(action.type)
 
   switch (action.type) {
 
@@ -123,38 +142,39 @@ export default (state = DEFAULT_STATE, action) => {
           startNewRound(
             state.countries,
             {
-              id: state.rounds.length,
               selectedFilters: state.selectedFilters,
               pageLength: 4
             }
           )
         ],
-        currentRoundId: state.rounds.length,
+        roundIndex: state.rounds.length,
         status: GAME_STATUS.RUNNING
       }
 
-    case 'SELECT_ANSWER':
+    case 'SELECT_ENTRY':
       return {
         ...state,
-        rounds: updatePageWithAnswer(state, action.answer)
+        rounds: updateRoundWithEntry(state, action.entry)
       }
 
     case 'SHOW_NEXT_PAGE':
-      const round = getCurrentRound(state)
-      if (!round) throw new Error('[game reducer] trying to increment set but there\'s no current round')
+      // increment pageIndex of currentRound
       return {
         ...state,
-        rounds: state.rounds.map((r) => (
-          r.id !== round.id
+        rounds: state.rounds.map((r, key) => (
+          key !== state.roundIndex
           ? r
-          : goNextPage(round)
+          : {
+            ...r,
+            pageIndex: ++r.pageIndex
+          }
         ))
       }
 
     case 'END_ROUND':
       return {
         ...state,
-        rounds: endRound(state.rounds, state.currentRoundId),
+        rounds: endRound(state.rounds, state.roundIndex),
         status: GAME_STATUS.END
       }
 
