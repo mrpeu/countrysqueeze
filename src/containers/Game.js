@@ -2,6 +2,7 @@ import React from 'react'
 import {connect} from 'react-redux'
 import {GAME_STATUS} from '../reducers/game'
 import {selectFilter} from '../actions'
+import './Game.css'
 import getGameMenu from '../components/GameMenu'
 import getGameRunning from '../components/GameRunning'
 import getGameEnd from '../components/GameEnd'
@@ -24,9 +25,7 @@ const getGame = (state) => {
 }
 
 const Game = (state) => {
-  return <div className='Game'>
-    {getGame(state)}
-  </div>
+  return getGame(state)
 }
 
 const mapStateToProps = (state, ownProps) => ({

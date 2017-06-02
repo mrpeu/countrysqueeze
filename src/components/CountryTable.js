@@ -1,26 +1,23 @@
 import React from 'react'
-import {GridList, GridTile} from 'material-ui/GridList'
-import {Card, CardTitle} from 'material-ui/Card'
 
-export default ({countries, countryAnswer, flags, onClickCountry}) =>
-  <Card className='Page'>
-    <CardTitle
-      className='PageTitle'
-      title={countryAnswer.name.common}
-    />
-    <GridList className='CountryTable'>
-      {countries.map(c =>
-        <GridTile
-          key={c.cca2}
+export default ({countries, answer, flags, onClickCountry}) => {
+  return <div className='CountryTable'>
+    <div className='Table' style={{
+      gridTemplateColumns: 'repeat(' + Math.round(Math.sqrt(countries.length)) + ', 1fr)'
+    }}>
+      {countries.map(country =>
+        <div
+          key={country.cca2}
           className='Country'
-          onClick={e => onClickCountry(c)}
+          onClick={e => onClickCountry(country)}
         >
           <img
             className='Flag'
-            src={c.flag}
-            alt={`flag of ${c.name.common}`}
+            src={country.flag}
+            alt={`flag of ${country.name.common}`}
           />
-        </GridTile>
+        </div>
       )}
-    </GridList>
-  </Card>
+    </div>
+  </div>
+}

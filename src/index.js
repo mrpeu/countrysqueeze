@@ -4,7 +4,7 @@ import {createStore, applyMiddleware} from 'redux'
 import {Provider} from 'react-redux'
 import thunk from 'redux-thunk'
 import Reducer from './reducers'
-import App from './components/App'
+import Game from './containers/Game'
 import './index.css'
 import {initializingGame} from './actions'
 import injectTapEventPlugin from 'react-tap-event-plugin'
@@ -27,7 +27,7 @@ store.dispatch(initializingGame())
 render(
   <Provider store={store}>
     <MuiThemeProvider>
-      <App />
+      <Game />
     </MuiThemeProvider>
   </Provider>,
   document.getElementById('root')

@@ -7,22 +7,19 @@ export default ({countries, roundIndex, rounds, dispatch}) => {
   const page = round.pages[round.pageIndex]
 
   return <div>
-    <div>&nbsp;
-      <div style={{float: 'left'}}>progress:&nbsp;
-        {round.pageIndex} - {round.pageIndex + round.pageLength}
-        &nbsp;/&nbsp;
-        {round.countries.length}
-      </div>
-      <div style={{float: 'right'}}>
-        {round.corrects.length}&nbsp;:&nbsp;{round.fails.length}
+    <div className='Header'>
+      <div>
+        <div>{countries[page.answer].name.common}</div>
+        <div style={{float: 'right'}}>{round.corrects.length}&nbsp;:&nbsp;{round.fails.length}</div>
       </div>
     </div>
-
-    <CountryTable
-      countries={page.countries.map(cca2 => countries[cca2])}
-      countryAnswer={countries[page.answer]}
-      onClickCountry={(entry) => {
-        dispatch(selectEntry(entry))
-      }} />
+    <div className='GameRunning'>
+      <CountryTable
+        countries={page.countries.map(cca2 => countries[cca2])}
+        answer={countries[page.answer]}
+        onClickCountry={(entry) => {
+          dispatch(selectEntry(entry))
+        }} />
+    </div>
   </div>
 }
