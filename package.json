@@ -5,6 +5,7 @@
   "homepage": "http://mrpeu.github.io/countrysqueeze",
   "dependencies": {
     "lodash.ismatch": "^4.4.0",
+    "lodash.shuffle": "^4.2.0",
     "material-ui": "^0.18.1",
     "react": "^15.5.4",
     "react-dom": "^15.5.4",

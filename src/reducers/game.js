@@ -1,4 +1,5 @@
 import isMatch from 'lodash.ismatch'
+import shuffle from 'lodash.shuffle'
 
 export const GAME_STATUS = {
   INIT: -1, MENU: 0, RUNNING: 1, END: 2
@@ -66,7 +67,7 @@ const createRoundsPages = (round, countries) => {
   })
   return {
     ...round,
-    pages
+    pages: shuffle(pages)
   }
 }
 
