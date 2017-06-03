@@ -14,10 +14,10 @@ And maybe Webpack, sound API, router
 - [x] use cca2 as key for countries' list and array index for rounds and pages
 - [x] merge App and Game
 - [x] cache assets, offline support (service-worker)
+- [ ] get rid of create-react-app, use webpack and gh-build directly
 - [ ] randomize page & answer
 - [ ] add timer
 - [ ] read more about the service worker
 - [ ] handle routing, sync game state with url [redux-little-router](https://github.com/formidablelabs/redux-little-router)
 - [ ] add sounds
-- [ ] get rid of create-react-app, use webpack and gh-build directly
 - [ ] use preact
