@@ -4,10 +4,11 @@ todo:
 - [x] randomize "round's paging"
 - [x] rename "answer" from player to "entry"
 - [x] use cca2 as key for countries' list and array index for rounds and pages
-- [ ] improve game running with better score
-- [ ] ~~wait that all flags are loaded~~
-- [ ] handle routing, sync game state with url
 - [x] merge App and Game
-- [ ] get rid of create-react-app, use webpack and gh-build directly
 - [x] cache assets, offline support (service-worker)
+- [ ] randomize page & answer
+- [ ] add timer
+- [ ] handle routing, sync game state with url (https://github.com/formidablelabs/redux-little-router)
+- [ ] add sounds
+- [ ] get rid of create-react-app, use webpack and gh-build directly
 - [ ] use preact

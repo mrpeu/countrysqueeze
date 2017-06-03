@@ -1,21 +1,32 @@
-.App {
-}
 
 .Game {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-.GameMenu,
-.GameRunning,
-.GameEnd {
+.Game > .Header {
+  flex: 0;
 }
 
-.GameEnd ul {
-  width: 50%;
-  float: left;
+.Game > .GameMenu,
+.Game > .GameEnd,
+.Game > .GameRunning{
+  min-height: 100%;
+  flex: 1;
+}
+
+.GameMenu {
+  display:flex;
+  flex-direction:column;
+}
+
+.GameMenu>button {
+  flex:1;
 }
 
 .Header {
-  background-color: #e8e8e8;
+  background-color: #ebebeb;
   font-weight: bold;
   padding: 1em;
   text-align: center;
@@ -24,13 +35,47 @@
 .CountryTable {
 }
 
+.scoreBar {
+  position: fixed;
+  bottom: 0;
+  height: 1em;
+  width: 100%;
+  display: flex;
+  color: #fff;
+  text-align: center;
+}
+
+.scoreBar>span {
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+
+.scoreBar>div {
+  flex: 1 0 auto;
+  transition: background-color .3s;
+  background-color: #ebebeb;
+}
+
+.scoreBar>div:nth-child(even) {
+  background-color: #e8e8e8;
+}
+
+.scoreBar>div.correct {
+  background-color: #43a047;
+}
+
+.scoreBar>div.fail {
+  background-color: #f44336;
+}
+
 .CountryTable .Table {
+  height: 100%;
   display: grid;
   padding: 1em;
   grid-gap: 1em;
   grid-auto-rows: minmax(20%, auto);
-  position: absolute;
-  height: 80%;
 }
 
 .Country {
@@ -46,12 +91,20 @@ img.Flag {
   object-fit: contain;
 }
 
-.CountryInline {
+.GameEnd ul {
   list-style: none;
+}
+
+.CountryInline {
+  display: inline;
+  margin-right: .5em;
+  margin-right: .25em;
+}
+.CountryInline:after {
+  content: ';'
 }
 
 .CountryInline img.Flag {
   max-width: 2em;
   /*height: 1em;*/
-  margin-right: .5em;
 }

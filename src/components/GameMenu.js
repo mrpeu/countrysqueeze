@@ -5,7 +5,7 @@ import {startNewRound} from '../actions'
 import FlatButton from 'material-ui/FlatButton'
 
 export default ({filters, selectedFilters, status, countries, dispatch}, onSelectFilter) => {
-  return <div>
+  return <div className='Game'>
     <div className='Header'>
       Countrysqueeze!
     </div>
@@ -13,7 +13,7 @@ export default ({filters, selectedFilters, status, countries, dispatch}, onSelec
       <FlatButton
         fullWidth
         onClick={e => {
-          dispatch(onSelectFilter({region: ''}))
+          dispatch(onSelectFilter(null))
           dispatch(startNewRound())
         }}
         disabled={status === GAME_STATUS.INIT}
@@ -31,6 +31,15 @@ export default ({filters, selectedFilters, status, countries, dispatch}, onSelec
           label={filter}
         />
     ))}
+      <FlatButton
+        fullWidth
+        onClick={e => {
+          dispatch(onSelectFilter({region: ''}))
+          dispatch(startNewRound())
+        }}
+        disabled={status === GAME_STATUS.INIT}
+        label='None'
+      />
     </div>
   </div>
 }

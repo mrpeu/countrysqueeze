@@ -20,14 +20,17 @@ const DEFAULT_ROUND = {
   end: null,
   // filter: {region:'Europe'},
   // countries: [],
-  pageIndex: 0,
+  pageIndex: -1,
   pageLength: 5,
   pages: [
     /* {
+      start: [Number],
+      end: [Number],
       answer: [String: cca2],
       countries: [
         [String: cca2]
-      ]
+      ],
+      entries: []
     } */
   ],
   corrects: [],
@@ -54,11 +57,12 @@ const getXCountriesForAnswer = (nb, countries, answer) => {
 
 const createRoundsPages = (round, countries) => {
   const pages = [...Array(countries.length)].map((_, i) => {
-    const result = {
+    const page = {
       countries: getXCountriesForAnswer(round.pageLength, countries, i),
-      answer: countries[i]
+      answer: countries[i],
+      entries: []
     }
-    return result
+    return page
   })
   return {
     ...round,
@@ -66,16 +70,52 @@ const createRoundsPages = (round, countries) => {
   }
 }
 
+const showNextPage = (round) => {
+  const pageIndex = ++round.pageIndex
+  return {
+    ...round,
+    pageIndex,
+    pages: round.pages.map((page, i) => i !== round.pageIndex
+      ? page
+      : {
+        ...page,
+        start: Date.now()
+      })
+  }
+}
+
 const startNewRound = (countries, options) => {
-  const selectedCountries = Object.keys(countries)
-    .filter(key => {
-      return isMatch(countries[key], options.selectedFilters)
-    })
-  return createRoundsPages({
-    ...DEFAULT_ROUND,
-    ...options,
-    countries: selectedCountries
-  }, selectedCountries)
+  const selectedCountries = options.selectedFilters === null
+    ? Object.keys(countries)
+    : Object.keys(countries)
+      .filter(key => {
+        return isMatch(countries[key], options.selectedFilters)
+      })
+
+  return showNextPage(
+    createRoundsPages(
+      {
+        ...DEFAULT_ROUND,
+        ...options,
+        countries: selectedCountries
+      }, selectedCountries)
+    )
+}
+
+const updatePageWithCorrectEntry = (page, entry) => {
+  return {
+    ...page,
+    entries: [...page.entries, entry.cca2],
+    end: Date.now()
+  }
+}
+
+const updatePageWithWrongEntry = (page, entry) => {
+  return {
+    ...page,
+    entries: [...page.entries, entry.cca2],
+    end: Date.now()
+  }
 }
 
 const updateRoundWithEntry = (state, entry) => {
@@ -86,12 +126,14 @@ const updateRoundWithEntry = (state, entry) => {
       if (entry.cca2 === answer) {
         return {
           ...r,
-          corrects: [...r.corrects, answer]
+          corrects: [...r.corrects, answer],
+          pages: r.pages.map((page, i) => i !== r.pageIndex ? page : updatePageWithCorrectEntry(page, entry))
         }
       } else {
         return {
           ...r,
-          fails: [...r.fails, answer]
+          fails: [...r.fails, answer],
+          pages: r.pages.map((page, i) => i !== r.pageIndex ? page : updatePageWithWrongEntry(page, entry))
         }
       }
     }
@@ -129,10 +171,12 @@ export default (state = DEFAULT_STATE, action) => {
     case 'SELECT_FILTER':
       return {
         ...state,
-        selectedFilters: {
-          ...state.selectedFilters,
-          ...action.value
-        }
+        selectedFilters: action.value === null
+          ? null
+          : {
+            ...state.selectedFilters,
+            ...action.value
+          }
       }
 
     case 'START_NEW_ROUND':
@@ -159,17 +203,23 @@ export default (state = DEFAULT_STATE, action) => {
       }
 
     case 'SHOW_NEXT_PAGE':
-      // increment pageIndex of currentRound
-      return {
-        ...state,
-        rounds: state.rounds.map((r, key) => (
-          key !== state.roundIndex
-          ? r
-          : {
-            ...r,
-            pageIndex: ++r.pageIndex
-          }
-        ))
+      const currentRound = state.rounds[state.roundIndex]
+      if (currentRound.pages.length <= currentRound.pageIndex + 1) {
+        return {
+          ...state,
+          rounds: endRound(state.rounds, state.roundIndex),
+          status: GAME_STATUS.END
+        }
+      } else {
+        // TODO: stay on same page if the correct answer hasnt been found
+        return {
+          ...state,
+          rounds: state.rounds.map((r, key) => (
+            key !== state.roundIndex
+            ? r
+            : showNextPage(r)
+          ))
+        }
       }
 
     case 'END_ROUND':
